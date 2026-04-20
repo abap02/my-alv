@@ -1,0 +1,75 @@
+*&---------------------------------------------------------------------*
+*& Include          ZZ0433_SALV_001_C01
+*&---------------------------------------------------------------------*
+
+*&---------------------------------------------------------------------*
+*& Include          ZZJHL_ALVTREE_TEMP_001_C01
+*&---------------------------------------------------------------------*
+include <cl_alv_control>.
+
+class lcl_salv_event_receive definition deferred.
+
+data: gs_layout         type lvc_s_layo,
+      gs_variant        type disvariant,
+      gt_fieldcat_spfli type lvc_t_fcat,
+      gt_sort           type lvc_t_sort,       "ALV Sort field
+      gt_exclude        type ui_functions,     "ALV Exclude
+      gv_alvtitle       type lvc_title,
+      gt_dropdown       type lvc_t_dral.       "
+
+data: go_salv_tree_spfli    type ref to cl_salv_tree,
+      go_salv_event_handler type ref to lcl_salv_event_receive,
+      go_events             type ref to cl_salv_events_table.
+
+* Custom Container.
+constants:
+  c_cont_spfli type scrfname value 'CONT_SPFLI'.
+
+data go_cont_docking type ref to cl_gui_docking_container.
+
+class lcl_salv_event_receive definition.
+
+  public section.
+
+    methods: on_added_function
+      for event added_function of cl_salv_events_tree
+      importing sender e_salv_function.
+
+
+*    methods: on_function_selected "UserCommand.
+*      for event function_selected of cl_gui_toolbar
+*      importing sender fcode.
+*
+*    methods: on_dropdown_clicked "menu.
+*      for event dropdown_clicked of cl_gui_toolbar
+*      importing sender fcode posx posy.
+
+endclass.
+
+class lcl_salv_event_receive implementation.
+
+  method on_added_function.
+
+    case e_salv_function.
+      when `NEW`.
+
+        data(lt_nodes) = go_salv_tree_spfli->get_selections( )->get_selected_nodes( ).
+        data(lt_items) = go_salv_tree_spfli->get_selections( )->get_selected_item( ).
+
+        message |added Function Key: { e_salv_function }| type `I`.
+      when ``.
+      when others.
+    endcase.
+
+  endmethod.
+
+*  method on_function_selected.
+*
+*  endmethod.
+*
+*
+*  method on_dropdown_clicked.
+*
+*  endmethod.
+
+endclass.

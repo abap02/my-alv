@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>ZZ0433CL_ALV_GRID_01</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>ALV Grid Event Receive (202306)</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>DISPLAY_ALV_VALUES</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Display ALV Values</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_DOUBLE_CLICK_FIELDNAME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Get Double Click Fieldname</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_DOUBLE_CLICK_ROWID</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Get Double Click Rowid</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_GRID_UCOMM_STATUS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Get Grid Ucommand Statud (N=new ; M=Modify; D=Display)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_HOTSPOT_CLICK_ROWID</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Get Hotspot Click Rowid</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_HOTSPOT_FIELDNAME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Get Hotspot Click Fieldname</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GET_REGISTED_EVENTS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Get Registed Events</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>IS_GRID_EVENT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>is Grid Event raised?</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MAKE_FIELDCAT_BY_ITAB</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Make Field Catalog By Internal Table</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_LAYOUT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>ALV control: Layout structure</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_REGISTER_EVENTS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Event Names</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_STABLE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>ALV control: Refresh stability</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_VARIANT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Layout (External Use)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_DROPDOWN</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Table for Drop Down Handles with Aliases</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_FIELDCAT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Field Catalog for List Viewer Control</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_FILTER</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>ALV control: Table of filter conditions</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_SORT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>ALV Control: Table of Sort Criteria</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_UI_EXCLUDE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Function Code Table</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MV_ALVTITLE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>ALV Control: Title bar text</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MV_DOUBLE_CLICK_FIELDNAME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Field Name</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MV_DOUBLE_CLICK_ROWID</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>4 Byte Signed Integer</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MV_GRID_UCOMM_STATUS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Single-Character Flag</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MV_HOTSPOT_FIELDNAME</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Field Name</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MV_HOTSPOT_ROWID</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>4 Byte Signed Integer</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>REFRESH_ALV_GRID</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Refresh ALV Grid</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_ALV_GRID_OPTIMIZE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set ALV Grid Field Optimize</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_FIELDNAME_FOR_COLOR</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set Fieldname for Color</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_FIELDNAME_FOR_INPUT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set Fieldname for Input Status</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_GRID_EVENTS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set Grid Event</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_GRID_UCOMM_STATUS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set Gird Ucommnad Status (N=new ; M=Modify; D=Display)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_INIT_TOOLBAR</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set Init Toolbar (Excluding Functions)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_LINE_COLOR</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set Line Color</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_REGISTOR_EVENTS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Set Register Event</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>TS_REGISTER_EVENT</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>ALV Grid Events</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>
