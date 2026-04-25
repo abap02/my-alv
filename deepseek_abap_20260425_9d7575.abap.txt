@@ -1,0 +1,728 @@
+*&---------------------------------------------------------------------*
+*& Report ZZ0433_ALVGRID_001_01
+*&---------------------------------------------------------------------*
+*& ALV Grid : Base (202306) - 통합 버전
+*&---------------------------------------------------------------------*
+REPORT zz0433_alvgrid_001_01.
+
+INCLUDE <cl_alv_control>.
+
+*&---------------------------------------------------------------------*
+*& 인터페이스 ZZ0433IF_ALVGRID_RECEIVE
+*&---------------------------------------------------------------------*
+INTERFACE zz0433if_alvgrid_receive
+  PUBLIC .
+
+  METHODS handle_before_user_command
+    FOR EVENT before_user_command OF cl_gui_alv_grid
+    IMPORTING sender e_ucomm .
+  METHODS handle_user_command
+    FOR EVENT user_command OF cl_gui_alv_grid
+    IMPORTING sender e_ucomm .
+  METHODS handle_after_user_command
+    FOR EVENT after_user_command OF cl_gui_alv_grid
+    IMPORTING sender e_ucomm e_saved e_not_processed .
+  METHODS handle_toolbar
+    FOR EVENT toolbar OF cl_gui_alv_grid
+    IMPORTING sender e_object e_interactive .
+  METHODS handle_double_click
+    FOR EVENT double_click OF cl_gui_alv_grid
+    IMPORTING sender e_row e_column es_row_no .
+  METHODS handle_hotspot_click
+    FOR EVENT hotspot_click OF cl_gui_alv_grid
+    IMPORTING sender e_row_id e_column_id es_row_no .
+  METHODS handle_data_changed
+    FOR EVENT data_changed OF cl_gui_alv_grid
+    IMPORTING sender er_data_changed e_onf4 e_onf4_before e_onf4_after e_ucomm .
+  METHODS handle_data_changed_finished
+    FOR EVENT data_changed_finished OF cl_gui_alv_grid
+    IMPORTING sender e_modified et_good_cells .
+  METHODS handle_on_f4
+    FOR EVENT onf4 OF cl_gui_alv_grid
+    IMPORTING sender e_fieldname e_fieldvalue es_row_no er_event_data et_bad_cells e_display .
+  METHODS handle_top_of_page
+    FOR EVENT top_of_page OF cl_gui_alv_grid
+    IMPORTING sender e_dyndoc_id table_index .
+  METHODS handle_button_click
+    FOR EVENT button_click OF cl_gui_alv_grid
+    IMPORTING sender es_col_id es_row_no .
+ENDINTERFACE.
+
+*&---------------------------------------------------------------------*
+*& 클래스 ZZ0433CL_ALV_GRID 정의
+*&---------------------------------------------------------------------*
+CLASS zz0433cl_alv_grid DEFINITION
+  PUBLIC
+  INHERITING FROM cl_gui_alv_grid
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+    INTERFACES zz0433if_alvgrid_receive .
+
+    ALIASES handle_after_user_command
+      FOR zz0433if_alvgrid_receive~handle_after_user_command .
+    ALIASES handle_before_user_command
+      FOR zz0433if_alvgrid_receive~handle_before_user_command .
+    ALIASES handle_button_click
+      FOR zz0433if_alvgrid_receive~handle_button_click .
+    ALIASES handle_data_changed
+      FOR zz0433if_alvgrid_receive~handle_data_changed .
+    ALIASES handle_data_changed_finished
+      FOR zz0433if_alvgrid_receive~handle_data_changed_finished .
+    ALIASES handle_double_click
+      FOR zz0433if_alvgrid_receive~handle_double_click .
+    ALIASES handle_hotspot_click
+      FOR zz0433if_alvgrid_receive~handle_hotspot_click .
+    ALIASES handle_on_f4
+      FOR zz0433if_alvgrid_receive~handle_on_f4 .
+    ALIASES handle_toolbar
+      FOR zz0433if_alvgrid_receive~handle_toolbar .
+    ALIASES handle_top_of_page
+      FOR zz0433if_alvgrid_receive~handle_top_of_page .
+    ALIASES handle_user_command
+      FOR zz0433if_alvgrid_receive~handle_user_command .
+
+    TYPES:
+      BEGIN OF ts_register_event,
+        onf4                  TYPE abap_bool,
+        data_changed          TYPE abap_bool,
+        before_user_command   TYPE abap_bool,
+        user_command          TYPE abap_bool,
+        after_user_command    TYPE abap_bool,
+        double_click          TYPE abap_bool,
+        top_of_page           TYPE abap_bool,
+        toolbar               TYPE abap_bool,
+        hotspot_click         TYPE abap_bool,
+        button_click          TYPE abap_bool,
+        data_changed_finished TYPE abap_bool,
+      END OF ts_register_event .
+
+    METHODS display_alv_values
+      IMPORTING
+        !sender        TYPE REF TO cl_gui_alv_grid
+        !e_row         TYPE lvc_s_row
+        !e_column      TYPE lvc_s_col
+        !es_row_no     TYPE lvc_s_roid
+      RETURNING
+        VALUE(rs_data) TYPE REF TO data .
+    METHODS get_double_click_fieldname
+      RETURNING VALUE(rv_fieldname) TYPE fieldname .
+    METHODS get_double_click_rowid
+      RETURNING VALUE(rv_rowid) TYPE int4 .
+    METHODS get_grid_ucomm_status
+      RETURNING VALUE(rv_status) TYPE char1 .
+    METHODS get_hotspot_click_rowid
+      RETURNING VALUE(rv_rowid) TYPE int4 .
+    METHODS get_hotspot_fieldname
+      RETURNING VALUE(rv_fieldname) TYPE fieldname .
+    METHODS get_registed_events
+      RETURNING VALUE(rs_events) TYPE ts_register_event .
+    METHODS is_grid_event
+      RETURNING VALUE(rv_event_bool) TYPE abap_bool .
+    METHODS make_fieldcat_by_itab
+      IMPORTING
+        !iv_no_mant        TYPE abap_bool OPTIONAL
+        !it_itab           TYPE STANDARD TABLE
+      CHANGING
+        VALUE(ct_fieldcat) TYPE lvc_t_fcat .
+    METHODS refresh_alv_grid
+      IMPORTING
+        !iv_opt TYPE abap_bool OPTIONAL .
+    METHODS set_fieldname_for_color
+      IMPORTING
+        !iv_fieldname       TYPE lvc_fname
+        !iv_color_code      TYPE char3
+      RETURNING VALUE(ct_cellcolor) TYPE lvc_t_scol .
+    METHODS set_fieldname_for_input
+      IMPORTING
+        !iv_fieldname     TYPE lvc_fname
+        !is_input         TYPE abap_bool
+      RETURNING VALUE(ct_celltab) TYPE lvc_t_styl .
+    METHODS set_grid_ucomm_status
+      IMPORTING
+        !iv_status TYPE char1 .
+    METHODS set_init_toolbar
+      CHANGING
+        !ct_toolbar_excluding TYPE ui_functions .
+    METHODS set_line_color
+      IMPORTING
+        !iv_grid_row_id TYPE int4
+        !lv_color_code  TYPE char4 DEFAULT 'C700' .
+    METHODS set_registor_events
+      IMPORTING
+        !is_register_events TYPE ts_register_event .
+
+  PROTECTED SECTION.
+    DATA ms_register_events TYPE ts_register_event .
+    DATA ms_stable TYPE lvc_s_stbl VALUE 'XX' ##NO_TEXT.
+    DATA mv_double_click_fieldname TYPE fieldname .
+    DATA mv_double_click_rowid TYPE int4 .
+    DATA mv_grid_event TYPE abap_bool .
+    DATA mv_grid_ucomm_status TYPE char1 VALUE 'D' ##NO_TEXT.
+    DATA mv_hotspot_fieldname TYPE fieldname .
+    DATA mv_hotspot_rowid TYPE int4 .
+
+  PRIVATE SECTION.
+    METHODS set_alv_grid_optimize .
+    METHODS set_grid_events .
+ENDCLASS.
+
+*&---------------------------------------------------------------------*
+*& 클래스 ZZ0433CL_ALV_GRID 구현
+*&---------------------------------------------------------------------*
+CLASS zz0433cl_alv_grid IMPLEMENTATION.
+
+  METHOD get_double_click_fieldname.
+    rv_fieldname = mv_double_click_fieldname.
+    CLEAR mv_double_click_fieldname.
+  ENDMETHOD.
+
+  METHOD get_double_click_rowid.
+    rv_rowid = mv_double_click_rowid.
+    CLEAR mv_double_click_rowid.
+  ENDMETHOD.
+
+  METHOD get_grid_ucomm_status.
+    rv_status = mv_grid_ucomm_status.
+  ENDMETHOD.
+
+  METHOD get_hotspot_click_rowid.
+    rv_rowid = mv_hotspot_rowid.
+    CLEAR mv_hotspot_rowid.
+  ENDMETHOD.
+
+  METHOD get_hotspot_fieldname.
+    rv_fieldname = mv_hotspot_fieldname.
+    CLEAR mv_hotspot_fieldname.
+  ENDMETHOD.
+
+  METHOD get_registed_events.
+    rs_events = CORRESPONDING #( ms_register_events ).
+  ENDMETHOD.
+
+  METHOD is_grid_event.
+    rv_event_bool = mv_grid_event.
+  ENDMETHOD.
+
+  METHOD make_fieldcat_by_itab.
+    DATA: s_fcat TYPE lvc_s_fcat.
+    DATA: lo_columns      TYPE REF TO cl_salv_columns_table,
+          lo_aggregations TYPE REF TO cl_salv_aggregations,
+          lo_salv_table   TYPE REF TO cl_salv_table,
+          lr_table        TYPE REF TO data.
+    FIELD-SYMBOLS <ftab> TYPE STANDARD TABLE.
+
+    CREATE DATA lr_table LIKE it_itab[].
+    ASSIGN lr_table->* TO <ftab>.
+
+    TRY.
+        cl_salv_table=>factory(
+          EXPORTING
+            list_display = abap_false
+          IMPORTING
+            r_salv_table = lo_salv_table
+          CHANGING
+            t_table      = <ftab> ).
+      CATCH cx_salv_msg.                                "#EC NO_HANDLER
+    ENDTRY.
+
+    lo_columns  = lo_salv_table->get_columns( ).
+    lo_aggregations = lo_salv_table->get_aggregations( ).
+
+    ct_fieldcat =
+      cl_salv_controller_metadata=>get_lvc_fieldcatalog(
+        r_columns      = lo_columns
+        r_aggregations = lo_aggregations ).
+
+    IF iv_no_mant IS NOT INITIAL.
+      DELETE ct_fieldcat WHERE fieldname = 'MANDT'.
+    ENDIF.
+
+    LOOP AT ct_fieldcat ASSIGNING FIELD-SYMBOL(<fs_fieldcat>).
+      <fs_fieldcat>-col_pos = sy-tabix.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD refresh_alv_grid.
+    me->refresh_table_display( is_stable = ms_stable ).
+    IF iv_opt EQ abap_true.
+      me->set_alv_grid_optimize( ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD set_alv_grid_optimize.
+    me->optimize_all_cols( 1 ).
+  ENDMETHOD.
+
+  METHOD set_fieldname_for_color.
+    DATA: ls_cellcolor TYPE lvc_s_scol.
+    CLEAR ct_cellcolor.
+    ls_cellcolor = VALUE #(
+      fname = iv_fieldname
+      color-col = CONV i( iv_color_code+0(1) )
+      color-int = CONV i( iv_color_code+1(1) )
+      color-inv = CONV i( iv_color_code+2(1) )
+    ).
+    INSERT ls_cellcolor INTO TABLE ct_cellcolor.
+  ENDMETHOD.
+
+  METHOD set_fieldname_for_input.
+    DATA ls_celltab TYPE lvc_s_styl.
+    ls_celltab = VALUE #(
+      fieldname = iv_fieldname
+      style = COND #( WHEN is_input EQ abap_true THEN cl_gui_alv_grid=>mc_style_enabled
+                      ELSE cl_gui_alv_grid=>mc_style_disabled )
+    ).
+    INSERT ls_celltab INTO TABLE ct_celltab.
+  ENDMETHOD.
+
+  METHOD set_grid_events.
+    me->register_edit_event( i_event_id = cl_gui_alv_grid=>mc_evt_modified ).
+    IF ms_register_events-onf4 EQ abap_true.
+      SET HANDLER me->handle_on_f4 FOR me.
+    ENDIF.
+    IF ms_register_events-user_command EQ abap_true.
+      SET HANDLER me->handle_user_command FOR me.
+    ENDIF.
+    IF ms_register_events-double_click EQ abap_true.
+      SET HANDLER me->handle_double_click FOR me.
+    ENDIF.
+    IF ms_register_events-top_of_page EQ abap_true.
+      SET HANDLER me->handle_top_of_page FOR me.
+    ENDIF.
+    IF ms_register_events-toolbar EQ abap_true.
+      SET HANDLER me->handle_toolbar FOR me.
+    ENDIF.
+    IF ms_register_events-hotspot_click EQ abap_true.
+      SET HANDLER me->handle_hotspot_click FOR me.
+    ENDIF.
+    IF ms_register_events-button_click EQ abap_true.
+      SET HANDLER me->handle_button_click FOR me.
+    ENDIF.
+    IF ms_register_events-data_changed EQ abap_true.
+      SET HANDLER me->handle_data_changed FOR me.
+    ENDIF.
+    IF ms_register_events-data_changed_finished EQ abap_true.
+      SET HANDLER me->handle_data_changed_finished FOR me.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD set_grid_ucomm_status.
+    mv_grid_ucomm_status = iv_status.
+  ENDMETHOD.
+
+  METHOD set_init_toolbar.
+    CLEAR ct_toolbar_excluding.
+    DEFINE _append_exclude.
+      APPEND cl_gui_alv_grid=>&1 TO ct_toolbar_excluding.
+    END-OF-DEFINITION.
+    _append_exclude: mc_fc_loc_undo,
+                     mc_fc_check,
+                     mc_fc_graph,
+                     mc_fc_help,
+                     mc_fc_info,
+                     mc_fc_loc_copy,
+                     mc_fc_html,
+                     mc_fc_loc_copy_row,
+                     mc_fc_loc_cut,
+                     mc_fc_loc_delete_row,
+                     mc_fc_loc_insert_row,
+                     mc_fc_loc_move_row,
+                     mc_fc_loc_append_row,
+                     mc_fc_loc_paste,
+                     mc_fc_loc_paste_new_row,
+                     mc_fc_print_prev,
+                     mc_fc_print,
+                     mc_fc_views,
+                     mc_fc_refresh.
+  ENDMETHOD.
+
+  METHOD set_line_color.
+    DATA: lo_table_descr TYPE REF TO cl_abap_tabledescr,
+          lo_struc_descr TYPE REF TO cl_abap_structdescr.
+    DATA(linecolor) = 'LINECOLOR'.
+    FIELD-SYMBOLS <lt_table> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <fs_field> TYPE any.
+
+    ASSIGN me->mt_outtab->* TO <lt_table>.
+    IF <lt_table> IS NOT ASSIGNED.
+      EXIT.
+    ENDIF.
+
+    lo_table_descr ?= cl_abap_tabledescr=>describe_by_data( <lt_table> ).
+    lo_struc_descr ?= lo_table_descr->get_table_line_type( ).
+
+    IF line_exists( lo_struc_descr->components[ name = linecolor ] ).
+      ASSIGN (linecolor) TO <fs_field>.
+      READ TABLE <lt_table> WITH KEY (<fs_field>) = lv_color_code ASSIGNING FIELD-SYMBOL(<ls_outtab>).
+      IF sy-subrc EQ 0.
+        ASSIGN COMPONENT linecolor OF STRUCTURE <ls_outtab> TO FIELD-SYMBOL(<linecolor>).
+        IF <linecolor> IS ASSIGNED.
+          CLEAR <linecolor>.
+        ENDIF.
+      ENDIF.
+      READ TABLE <lt_table> INDEX iv_grid_row_id ASSIGNING <ls_outtab>.
+      IF sy-subrc EQ 0.
+        ASSIGN COMPONENT linecolor OF STRUCTURE <ls_outtab> TO <linecolor>.
+        IF <linecolor> IS ASSIGNED.
+          <linecolor> = lv_color_code.
+        ENDIF.
+        ASSIGN COMPONENT 'CELLCOLOR' OF STRUCTURE <ls_outtab> TO FIELD-SYMBOL(<cellcolor>).
+        IF <cellcolor> IS ASSIGNED.
+          CLEAR <cellcolor>.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD set_registor_events.
+    ms_register_events = is_register_events.
+    me->set_grid_events( ).
+  ENDMETHOD.
+
+  METHOD display_alv_values.
+    DATA lo_struct TYPE REF TO cl_abap_structdescr.
+    FIELD-SYMBOLS <lt_outtab> TYPE STANDARD TABLE.
+
+    CHECK e_row-index IS NOT INITIAL.
+    ASSIGN me->mt_outtab->* TO <lt_outtab>.
+    CHECK <lt_outtab> IS ASSIGNED.
+
+    READ TABLE <lt_outtab> ASSIGNING FIELD-SYMBOL(<ls_outtab>) INDEX e_row-index.
+    IF sy-subrc EQ 0.
+      lo_struct ?= cl_abap_typedescr=>describe_by_data( <ls_outtab> ).
+      CREATE DATA rs_data TYPE HANDLE lo_struct.
+      ASSIGN rs_data->* TO FIELD-SYMBOL(<fs_data>).
+      <fs_data> = CORRESPONDING #( <ls_outtab> ).
+    ENDIF.
+  ENDMETHOD.
+ENDCLASS.
+
+*&---------------------------------------------------------------------*
+*& 공통 데이터 및 폼 (ZZ0433_ALV_COMMON_01)
+*&---------------------------------------------------------------------*
+DATA: save_ok         TYPE sy-ucomm,
+      ok_code         TYPE sy-ucomm,
+      gv_title        TYPE sy-title,
+      gv_sign         TYPE char1,
+      gv_init         TYPE sap_bool,
+      gv_count        TYPE sy-tabix,
+      gv_error        TYPE sap_bool,
+      gv_display      TYPE sap_bool,
+      gv_cursor       TYPE fieldname,
+      gv_cursor_dynnr TYPE sydynnr,
+      gv_message_text TYPE bapi_msg,
+      gt_fcode        TYPE TABLE OF sy-ucomm,
+      gt_cond         TYPE TABLE OF string,
+      gs_message      TYPE bapiret2,
+      gt_message      TYPE TABLE OF bapiret2,
+      gv_lvc_title    TYPE lvc_title,
+      gv_cprog        TYPE sy-cprog,
+      gv_dynnr        TYPE sy-dynnr.
+
+* 상수
+CONSTANTS: c_red    TYPE icon-id    VALUE '@0A@',
+           c_yellow TYPE icon-id    VALUE '@09@',
+           c_green  TYPE icon-id    VALUE '@08@',
+           c_rled   TYPE icon-id    VALUE '@5C@',
+           c_yled   TYPE icon-id    VALUE '@5D@',
+           c_gled   TYPE icon-id    VALUE '@5B@',
+           c_copy           TYPE icon-id VALUE '@14@',
+           c_delete         TYPE icon-id VALUE '@11@',
+           c_delete_line    TYPE icon-id VALUE '@18@',
+           c_insert         TYPE icon-id VALUE '@17@',
+           c_create         TYPE icon-id VALUE '@0Y@',
+           c_export         TYPE icon-id VALUE '@49@',
+           c_import         TYPE icon-id VALUE '@48@',
+           c_save           TYPE icon-id VALUE '@2L@',
+           c_exec           TYPE icon-id VALUE '@15@',
+           c_ok             TYPE icon-id VALUE '@0V@',
+           c_canc           TYPE icon-id VALUE '@0W@',
+           c_select_all     TYPE icon-id VALUE '@4B@',
+           c_deselect_all   TYPE icon-id VALUE '@4D@',
+           c_display        TYPE icon-id VALUE '@10@',
+           c_change         TYPE icon-id VALUE '@0Z@',
+           c_change_display TYPE icon-id VALUE '@3I@'.
+
+CONSTANTS: c_a(1) TYPE c VALUE 'A', c_b(1) TYPE c VALUE 'B', c_c(1) TYPE c VALUE 'C',
+           c_d(1) TYPE c VALUE 'D', c_e(1) TYPE c VALUE 'E', c_f(1) TYPE c VALUE 'F',
+           c_g(1) TYPE c VALUE 'G', c_h(1) TYPE c VALUE 'H', c_i(1) TYPE c VALUE 'I',
+           c_j(1) TYPE c VALUE 'J', c_k(1) TYPE c VALUE 'K', c_l(1) TYPE c VALUE 'L',
+           c_m(1) TYPE c VALUE 'M', c_n(1) TYPE c VALUE 'N', c_o(1) TYPE c VALUE 'O',
+           c_p(1) TYPE c VALUE 'P', c_q(1) TYPE c VALUE 'Q', c_r(1) TYPE c VALUE 'R',
+           c_s(1) TYPE c VALUE 'S', c_t(1) TYPE c VALUE 'T', c_u(1) TYPE c VALUE 'U',
+           c_v(1) TYPE c VALUE 'V', c_w(1) TYPE c VALUE 'W', c_x(1) TYPE c VALUE 'X',
+           c_y(1) TYPE c VALUE 'Y', c_z(1) TYPE c VALUE 'Z'.
+
+CONSTANTS: c_0 TYPE c VALUE '0', c_1 TYPE c VALUE '1', c_2 TYPE c VALUE '2',
+           c_3 TYPE c VALUE '3', c_4 TYPE c VALUE '4', c_5 TYPE c VALUE '5',
+           c_6 TYPE c VALUE '6', c_7 TYPE c VALUE '7', c_8 TYPE c VALUE '8',
+           c_9 TYPE c VALUE '9'.
+
+CONSTANTS: c_zero2  TYPE c LENGTH 2  VALUE '00',
+           c_zero3  TYPE c LENGTH 3  VALUE '000',
+           c_zero4  TYPE c LENGTH 4  VALUE '0000',
+           c_zero5  TYPE c LENGTH 5  VALUE '00000',
+           c_zero6  TYPE c LENGTH 6  VALUE '000000',
+           c_zero7  TYPE c LENGTH 7  VALUE '0000000',
+           c_zero8  TYPE c LENGTH 8  VALUE '00000000',
+           c_zero9  TYPE c LENGTH 9  VALUE '000000000',
+           c_zero10 TYPE c LENGTH 10 VALUE '0000000000',
+           c_zero11 TYPE c LENGTH 11 VALUE '00000000000',
+           c_zero12 TYPE c LENGTH 12 VALUE '000000000000'.
+
+CONSTANTS: c_bt(2) TYPE c VALUE 'BT', c_eq(2) TYPE c VALUE 'EQ', c_ge(2) TYPE c VALUE 'GE',
+           c_gt(2) TYPE c VALUE 'GT', c_le(2) TYPE c VALUE 'LE', c_lt(2) TYPE c VALUE 'LT',
+           c_ne(2) TYPE c VALUE 'NE'.
+
+*----------------------------------------------------------------------*
+* FORM _bapi_commit
+*----------------------------------------------------------------------*
+FORM _bapi_commit.
+  CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+    EXPORTING
+      wait = 'X'.
+ENDFORM.
+
+*----------------------------------------------------------------------*
+* FORM _bapi_rollback
+*----------------------------------------------------------------------*
+FORM _bapi_rollback.
+  CALL FUNCTION 'BAPI_TRANSACTION_ROLLBACK'.
+ENDFORM.
+
+*----------------------------------------------------------------------*
+* FORM popup_to_confirm
+*----------------------------------------------------------------------*
+FORM popup_to_confirm USING p_title TYPE text50
+                            p_question TYPE text255
+                            r_answer TYPE char1.
+  CALL FUNCTION 'POPUP_TO_CONFIRM'
+    EXPORTING
+      titlebar              = p_title
+      text_question         = p_question
+      text_button_1         = 'Yes'
+      text_button_2         = 'No'
+      display_cancel_button = space
+    IMPORTING
+      answer                = r_answer
+    EXCEPTIONS
+      text_no_found         = 1
+      others                = 2.
+  CASE r_answer.
+    WHEN `1`.
+      r_answer = `Y`.
+    WHEN OTHERS.
+      r_answer = `N`.
+  ENDCASE.
+ENDFORM.
+
+*----------------------------------------------------------------------*
+* FORM exit_ucomm
+*----------------------------------------------------------------------*
+FORM exit_ucomm.
+  DATA lv_answer TYPE char1.
+  CASE sy-ucomm.
+    WHEN 'EXIT'.
+      PERFORM popup_to_confirm USING 'Exit' 'Do you want to Exit Programe?' lv_answer.
+      CHECK lv_answer EQ 'Y'.
+      LEAVE PROGRAM.
+    WHEN 'BACK' OR 'CANC'.
+      PERFORM popup_to_confirm USING 'Exit' 'Do you want to Back to Previous screen?' lv_answer.
+      CHECK lv_answer EQ 'Y'.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+ENDFORM.
+
+*&---------------------------------------------------------------------*
+*& TOP 데이터 (ZZ0433_ALVGRID_001_TOP)
+*&---------------------------------------------------------------------*
+TABLES spfli.
+
+DATA: gs_spfli TYPE spfli,
+      gt_spfli TYPE TABLE OF spfli.
+
+*&---------------------------------------------------------------------*
+*& ALV 관련 전역 객체 (C01)
+*&---------------------------------------------------------------------*
+CLASS lcl_gui_alv_grid DEFINITION DEFERRED.
+
+DATA: go_grid_spfli   TYPE REF TO lcl_gui_alv_grid.
+DATA: go_custom_container TYPE REF TO cl_gui_custom_container,
+      go_splitter         TYPE REF TO cl_gui_splitter_container,
+      go_cont_spfli       TYPE REF TO cl_gui_container,
+      go_cont_docking     TYPE REF TO cl_gui_docking_container.
+
+CONSTANTS: c_cont_spfli TYPE scrfname VALUE 'CONT_SPFLI'.
+
+*&---------------------------------------------------------------------*
+*& LCL_GUI_ALV_GRID 정의 (ZZ0433CL_ALV_GRID 상속)
+*&---------------------------------------------------------------------*
+CLASS lcl_gui_alv_grid DEFINITION INHERITING FROM zz0433cl_alv_grid.
+  PUBLIC SECTION.
+    METHODS display_alv_values REDEFINITION.
+ENDCLASS.
+
+CLASS lcl_gui_alv_grid IMPLEMENTATION.
+  METHOD display_alv_values.
+    DATA(lo_data) = super->display_alv_values(
+      EXPORTING
+        sender    = sender
+        e_row     = e_row
+        e_column  = e_column
+        es_row_no = es_row_no
+    ).
+    ASSIGN lo_data->* TO FIELD-SYMBOL(<fs_data>).
+    CASE sender.
+      WHEN go_grid_spfli.
+        gs_spfli = CORRESPONDING #( <fs_data> ).
+        cl_gui_cfw=>set_new_ok_code( 'DOUBLE_SPFLI' ).
+      WHEN OTHERS.
+    ENDCASE.
+  ENDMETHOD.
+ENDCLASS.
+
+*&---------------------------------------------------------------------*
+*& PBO 모듈 (ZZ0433_ALVGRID_001_PBO)
+*&---------------------------------------------------------------------*
+MODULE status_9000 OUTPUT.
+  SET PF-STATUS 'S9000'.
+  SET TITLEBAR 'T9000' WITH gv_title.
+ENDMODULE.
+
+MODULE set_alv_grid_display OUTPUT.
+  PERFORM set_alv_grid_display.
+ENDMODULE.
+
+MODULE set_cursor OUTPUT.
+  CHECK gv_cursor_dynnr EQ sy-dynnr.
+  IF gv_cursor IS NOT INITIAL.
+    SET CURSOR FIELD gv_cursor.
+    CLEAR: gv_cursor, gv_cursor_dynnr.
+  ENDIF.
+ENDMODULE.
+
+*&---------------------------------------------------------------------*
+*& PAI 모듈 (ZZ0433_ALVGRID_001_PAI)
+*&---------------------------------------------------------------------*
+MODULE exit_command INPUT.
+  PERFORM exit_ucomm.
+ENDMODULE.
+
+MODULE user_command_9000 INPUT.
+  PERFORM user_command_9000.
+ENDMODULE.
+
+MODULE get_cursor INPUT.
+  IF gv_cursor IS INITIAL.
+    GET CURSOR FIELD gv_cursor.
+    IF gv_cursor IS NOT INITIAL.
+      gv_cursor_dynnr = sy-dynnr.
+    ELSE.
+      CLEAR gv_cursor_dynnr.
+    ENDIF.
+  ENDIF.
+ENDMODULE.
+
+*&---------------------------------------------------------------------*
+*& 폼 루틴 - F01 (set_alv_grid_display, set_fieldcat_spfli)
+*&---------------------------------------------------------------------*
+FORM set_alv_grid_display .
+  IF go_grid_spfli IS INITIAL.
+    go_custom_container = NEW #( container_name = c_cont_spfli ).
+    go_grid_spfli = NEW #( i_parent = go_custom_container i_appl_events = space ).
+
+    " Variant
+    go_grid_spfli->ms_variant = VALUE #(
+      report      = sy-repid
+      handle      = `A1`
+      log_group   = `GR1`
+      username    = sy-uname
+      text        = `SPFLI`
+    ).
+
+    " Layout
+    go_grid_spfli->ms_layout = VALUE #(
+      cwidth_opt  = abap_true
+      zebra       = abap_true
+      box_fname   = space
+      no_rowmark  = space
+      sel_mode    = `A`
+      stylefname  = space
+      grid_title  = space
+      smalltitle  = abap_true
+      no_toolbar  = space
+      info_fname  = space
+      ctab_fname  = space
+    ).
+
+    PERFORM set_fieldcat_spfli.
+    go_grid_spfli->set_init_toolbar( CHANGING ct_toolbar_excluding = go_grid_spfli->mt_ui_exclude ).
+
+    go_grid_spfli->set_table_for_first_display(
+      EXPORTING
+        i_buffer_active      = 'X'
+        i_bypassing_buffer   = 'X'
+        i_save               = 'A'
+        is_variant           = go_grid_spfli->ms_variant
+        is_layout            = go_grid_spfli->ms_layout
+        it_toolbar_excluding = go_grid_spfli->mt_ui_exclude
+      CHANGING
+        it_outtab            = gt_spfli
+        it_fieldcatalog      = go_grid_spfli->mt_fieldcat
+        it_sort              = go_grid_spfli->mt_sort
+        it_filter            = go_grid_spfli->mt_filter
+      EXCEPTIONS
+        OTHERS               = 4
+    ).
+    IF sy-subrc <> 0.
+      MESSAGE ID sy-msgid TYPE sy-msgty NUMBER sy-msgno
+        WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4.
+    ENDIF.
+  ENDIF.
+ENDFORM.
+
+FORM set_fieldcat_spfli .
+  go_grid_spfli->make_fieldcat_by_itab(
+    EXPORTING
+      it_itab     = gt_spfli
+    CHANGING
+      ct_fieldcat = go_grid_spfli->mt_fieldcat
+  ).
+  LOOP AT go_grid_spfli->mt_fieldcat ASSIGNING FIELD-SYMBOL(<fs_fieldcat>).
+    CASE <fs_fieldcat>-fieldname.
+      WHEN `CARRID` OR `CONNID` OR `COUNTRYFR` OR `CITYFROM` OR `AIRPFROM`
+        OR `COUNTRYTO` OR `CITYTO` OR `AIRPTO` OR `FLTIME` OR `DEPTIME`
+        OR `ARRTIME` OR `DISTANCE` OR `DISTID` OR `FLTYPE` OR `PERIOD`.
+        " keep
+      WHEN OTHERS.
+*        <fs_fieldcat>-tech = abap_true.  " 필요시 주석 해제
+    ENDCASE.
+  ENDLOOP.
+ENDFORM.
+
+*&---------------------------------------------------------------------*
+*& 폼 루틴 - F02 (set_init, user_command_9000)
+*&---------------------------------------------------------------------*
+FORM set_init .
+  gv_title = sy-title.
+ENDFORM.
+
+FORM user_command_9000 .
+  save_ok = ok_code.
+  CLEAR ok_code.
+  CASE save_ok.
+    WHEN ''.
+    WHEN OTHERS.
+  ENDCASE.
+ENDFORM.
+
+*&---------------------------------------------------------------------*
+*& 실행부 (INITIALIZATION, START-OF-SELECTION, CALL SCREEN)
+*&---------------------------------------------------------------------*
+INITIALIZATION.
+  PERFORM set_init.
+
+START-OF-SELECTION.
+  SELECT * FROM spfli INTO CORRESPONDING FIELDS OF TABLE @gt_spfli.
+  CALL SCREEN '9000'.
